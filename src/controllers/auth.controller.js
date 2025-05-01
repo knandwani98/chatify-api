@@ -71,6 +71,9 @@ export const login = async (req, res) => {
 
     const isVerified = await user.verifyPassword(password);
 
+    const newUserObj = user.toObject();
+    delete newUserObj.password;
+
     if (!isVerified) {
       return res.status(400).json({
         success: false,
@@ -95,7 +98,7 @@ export const login = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "User logged in successfully",
+      data: newUserObj,
     });
   } catch (error) {
     return res.status(500).send({
@@ -106,9 +109,9 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  try {
-    const token = req.cookie.token;
+  const token = req.cookies?.token || null;
 
+  try {
     if (!token) {
       return res.status(404).send({
         success: false,
@@ -121,6 +124,7 @@ export const logout = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
+
     res.status(200).json({
       success: true,
       message: "User logout successfully",
