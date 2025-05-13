@@ -1,7 +1,12 @@
-import jwt from "jsonwebtoken";
-import User from "../models/user.model.js";
+import { NextFunction, Request, Response } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import User from "../models/user.model";
 
-export const protectedRoutes = async (req, res, next) => {
+export const protectedRoutes = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
 
@@ -12,7 +17,9 @@ export const protectedRoutes = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload & {
+      id: string;
+    };
 
     const validUser = await User.findById(decoded.id).select("-password");
 

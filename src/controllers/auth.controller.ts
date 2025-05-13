@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.model.js";
+import { Request, Response } from "express";
+import User from "../models/user.model";
 
-export const signUp = async (req, res) => {
+export const signUp = async (req: Request, res: Response): Promise<any> => {
   try {
     const { username, fullname, password } = req.body;
 
@@ -33,7 +34,7 @@ export const signUp = async (req, res) => {
     }
 
     const newUser = await User.create({ username, fullname, password });
-    const newUserObj = newUser.toObject();
+    const newUserObj = newUser.toObject() as any;
     delete newUserObj.password;
 
     return res.status(201).send({
@@ -44,12 +45,12 @@ export const signUp = async (req, res) => {
   } catch (error) {
     return res.status(500).send({
       success: false,
-      message: error.message || "Internal Server Error",
+      message: (error as Error) || "Internal Server Error",
     });
   }
 };
 
-export const login = async (req, res) => {
+export const login = async (req: Request, res: Response): Promise<any> => {
   try {
     const { username, password } = req.body;
 
@@ -71,7 +72,7 @@ export const login = async (req, res) => {
 
     const isVerified = await user.verifyPassword(password);
 
-    const newUserObj = user.toObject();
+    const newUserObj = user.toObject() as any;
     delete newUserObj.password;
 
     if (!isVerified) {
@@ -83,7 +84,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id, username: user.username },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET!,
       {
         expiresIn: "7d",
       }
@@ -103,12 +104,12 @@ export const login = async (req, res) => {
   } catch (error) {
     return res.status(500).send({
       success: false,
-      message: error.message || "Internal Server Error",
+      message: (error as Error) || "Internal Server Error",
     });
   }
 };
 
-export const logout = async (req, res) => {
+export const logout = async (req: Request, res: Response): Promise<any> => {
   const token = req.cookies?.token || null;
 
   try {
@@ -132,12 +133,15 @@ export const logout = async (req, res) => {
   } catch (error) {
     return res.status(500).send({
       success: false,
-      message: error.message || "Internal Server Error",
+      message: (error as Error) || "Internal Server Error",
     });
   }
 };
 
-export const loggedInUser = (req, res) => {
+export const loggedInUser = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
   return res.status(200).json({
     success: true,
     data: req.user,

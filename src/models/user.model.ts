@@ -1,7 +1,19 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
-const userSchema = new Schema({
+export interface UserType extends Document {
+  _id: string;
+  username: string;
+  fullname: string;
+  profileUrl: string;
+  bio: string;
+  password: string;
+  friends: string[];
+  friendRequest: string[];
+  verifyPassword: (password: string) => boolean;
+}
+
+const userSchema = new Schema<UserType>({
   username: {
     type: String,
     unique: [true, "Username already exists"],
@@ -45,15 +57,15 @@ userSchema.pre("save", async function (next) {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(this.password, 10);
+    const hashedPassword = await bcrypt.hash(this?.password, 10);
     this.password = hashedPassword;
     next();
   } catch (error) {
-    next(error);
+    next(error as Error);
   }
 });
 
-userSchema.methods.verifyPassword = async function (password) {
+userSchema.methods.verifyPassword = async function (password: string) {
   try {
     const isMatch = await bcrypt.compare(password, this.password);
     return isMatch;
@@ -63,6 +75,6 @@ userSchema.methods.verifyPassword = async function (password) {
   }
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model<UserType>("User", userSchema);
 
 export default User;
