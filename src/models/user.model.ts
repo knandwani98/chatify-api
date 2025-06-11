@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
-export interface UserType extends Document {
+export interface IUser extends Document {
   _id: string;
   username: string;
   fullname: string;
@@ -13,7 +13,7 @@ export interface UserType extends Document {
   verifyPassword: (password: string) => boolean;
 }
 
-const userSchema = new Schema<UserType>({
+const userSchema = new Schema<IUser>({
   username: {
     type: String,
     unique: [true, "Username already exists"],
@@ -75,6 +75,6 @@ userSchema.methods.verifyPassword = async function (password: string) {
   }
 };
 
-const User = mongoose.model<UserType>("User", userSchema);
+const User = mongoose.model<IUser>("User", userSchema);
 
 export default User;

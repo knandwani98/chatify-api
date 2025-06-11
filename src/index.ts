@@ -2,13 +2,17 @@ import express, { json, urlencoded } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import authRouter from "./routes/auth.route";
+import { connectDB } from "./utils/db";
+import path from "path";
 
-dotenv.config();
+const envFile =
+  process.env.NODE_ENV === "production" ? ".env.production" : ".env.local";
+dotenv.config({ path: path.resolve(__dirname, `../${envFile}`) });
 
-import { connectDB } from "./utils/db.js";
-import authRouter from "./routes/auth.route.js";
+console.log(process.env.NODE_ENV, "NODE_ENV");
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT! || 6000;
 
 const app = express();
 
@@ -18,6 +22,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());

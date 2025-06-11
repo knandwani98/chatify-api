@@ -2,17 +2,16 @@
   "name": "chatify-api",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch && nodemon dist/index.js --watch"
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/jsonwebtoken": "^9.0.9",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -24,9 +23,12 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.18",
-    "@types/express": "^5.0.1",
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^22.15.17",
-    "nodemon": "^3.1.10"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
